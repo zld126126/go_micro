@@ -1,23 +1,29 @@
-package pkg
+package main
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/micro/go-micro"
 
-	"go_micro/pkg/config"
-	"go_micro/pkg/controller"
+	proto "go_micro/proto"
 )
 
-type Client struct {
-	Config  *config.Config
-	Query   *controller.Query
-	Service micro.Service
-}
+func main() {
+	// 定义服务，可以传入其它可选参数
+	service := micro.NewService(micro.Name("landon.assist.client"), micro.Address(":9091"))
+	service.Init()
 
-func (p *Client) Init() *Client {
-	p.Service.Init()
-	return p
-}
+	// 创建客户端
+	assist := proto.NewQueryService("landon.assist.service", service.Client())
 
-func (p *Client) Run() error {
-	return p.Service.Run()
+	// 调用greeter服务
+	rsp, err := assist.GetUser(context.TODO(), &proto.UserId{Id: 888888})
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// 打印响应结果
+	fmt.Println(rsp)
 }
