@@ -13,7 +13,7 @@ type AssistService struct{}
 
 func (p *AssistService) GetUser(ctx context.Context, req *proto.UserId, rsp *proto.User) error {
 	rsp.Name = fmt.Sprintf(`%d`, req.Id)
-	rsp.Time = util.TimeToInt64()
+	rsp.Time = util.ParseTimeToInt64()
 	return nil
 }
 

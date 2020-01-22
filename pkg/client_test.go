@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"testing"
 
 	"github.com/micro/go-micro"
 
 	proto "go_micro/proto"
 )
 
-func main() {
+func TestMain(m *testing.M) {
 	// 定义服务，可以传入其它可选参数
 	service := micro.NewService(micro.Name("landon.assist.client"), micro.Address(":9091"))
 	service.Init()

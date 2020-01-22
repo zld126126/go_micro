@@ -53,12 +53,14 @@ type Handle struct {
 	Micro         micro.Service
 	Client        client.Client
 	AssistService proto.QueryService
+	Config        *Config
+	DB            *DB
 }
 
 func (p *Handle) Run() {
 	// 启动服务
 	go func() {
-		p.Web.Handle("/", controller.InterceptController(p.AssistService))
+		p.Web.Handle("/", controller.InterceptController(p.AssistService, p.DB.GetGorm()))
 		if err := p.Web.Run(); err != nil {
 			fmt.Println(err)
 		}

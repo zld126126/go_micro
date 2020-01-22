@@ -6,17 +6,19 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 
 	proto "go_micro/proto"
 )
 
-func InterceptController(service proto.QueryService) *gin.Engine {
+func InterceptController(service proto.QueryService, db *gorm.DB) *gin.Engine {
 	router := gin.New()
 	router.Use(ServeRecover)
 	group := router.Group("")
 	{
 		group.GET("/hello", SayHello)
 		group.GET("/activity", GetActivity(service))
+		group.GET("/user/:id", GetUser(db))
 		group.GET("/err", TestErr)
 	}
 	return router

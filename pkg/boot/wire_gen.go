@@ -9,6 +9,10 @@ import (
 	"github.com/google/wire"
 )
 
+import (
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+)
+
 // Injectors from wire.go:
 
 func InitHandle() (*Handle, func(), error) {
@@ -16,16 +20,24 @@ func InitHandle() (*Handle, func(), error) {
 	webService := initMicroWebService(service)
 	client := initMicroServiceClient(service)
 	queryService := initAssistService(service)
+	config := DefaultConfig()
+	db := NewDatabase(config)
 	handle := &Handle{
 		Web:           webService,
 		Micro:         service,
 		Client:        client,
 		AssistService: queryService,
+		Config:        config,
+		DB:            db,
 	}
 	return handle, func() {
 	}, nil
 }
 
 // wire.go:
+
+var configSet = wire.NewSet(DefaultConfig)
+
+var databaseSet = wire.NewSet(NewDatabase)
 
 var baseSet = wire.NewSet(initMicroServiceClient, initAssistService, initMicroService, initMicroWebService)
